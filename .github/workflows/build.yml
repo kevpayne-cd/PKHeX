@@ -1,0 +1,29 @@
+name: Compile Legacy PKHeX
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        ref: '22.12.18'
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore NuGet Packages
+      run: nuget restore PKHeX.sln
+
+    - name: Compile Solution
+      run: msbuild PKHeX.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Upload Clean Windows 7 EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: PKHeX-22.12.18-Win7
+        path: PKHeX.WinForms/bin/Release/
